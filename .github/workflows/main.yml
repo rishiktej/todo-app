@@ -37,7 +37,7 @@ jobs:
 
       # Add steps for building your web application
       - name: Build app
-        run: npm run build  # Example command for building
+        run: npm start
 
   test:
     name: Test
