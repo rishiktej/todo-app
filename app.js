@@ -1,6 +1,6 @@
 const flash = require("connect-flash");
 const express = require("express");
-var csrf = require("tiny-csrf");
+let csrf = require("tiny-csrf");
 const app = express();
 const { Todo, User } = require("./models");
 const bodyParser = require("body-parser");

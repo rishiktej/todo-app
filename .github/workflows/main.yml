@@ -16,11 +16,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Add steps for code linting, formatting, or any other validations
+      # Add steps for TypeScript type checking
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+
       - name: Install dependencies
         run: npm install
-      - name: Code linting
-        run: npm run lint  # Example command for linting
+
+      - name: TypeScript type checking
+        run: npm run type-check  # Example command for TypeScript type checking
+
 
   build:
     name: Build
