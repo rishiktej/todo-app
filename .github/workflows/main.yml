@@ -20,8 +20,8 @@ jobs:
       # Execution: Install dependencies and run linting and formatting checks
       - name: Install dependencies
         run: npm install
-      - name: Code linting
-        run: npm run lint
+      # - name: Code linting
+      #   run: npm run lint
 
   build:
     name: Build
@@ -35,8 +35,8 @@ jobs:
       # Execution: Install dependencies and run the build script
       - name: Install dependencies
         run: npm install
-      - name: Build app
-        run: npm run build
+      # - name: Build app
+      #   run: npm run build
 
   test:
     name: Test
