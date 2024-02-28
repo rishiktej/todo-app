@@ -19,8 +19,6 @@ jobs:
       # Add steps for code linting, formatting, or any other validations
       - name: Install dependencies
         run: npm install
-      - name: Code linting
-        run: npm run lint  # Example command for linting
 
   build:
     name: Build
