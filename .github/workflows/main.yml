@@ -1,59 +1,68 @@
-name: Auto test L10 solution
-on: push
-env:
-  PG_DATABASE: wd-todo-test
-  PG_USER: postgres
-  PG_PASSWORD: rishidb
+name: Web App CI/CD
+
+on:
+  push:
+    branches:
+      - main  # Change this to your main branch name
+  pull_request:
+    branches:
+      - main  # Change this to your main branch name
+
 jobs:
-  # Label of the container job
-  run-tests:
-    # Containers must run in Linux based operating systems
+  validate_code:
+    name: Validate Code
     runs-on: ubuntu-latest
-
-    # Service containers to run with `container-job`
-    services:
-      # Label used to access the service container
-      postgres:
-        # Docker Hub image
-        image: postgres:11.7
-        # Provide the password for postgres
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: rishidb
-          POSTGRES_DB: wd-too-test
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
     steps:
-      # Downloads a copy of the code in your repository before running CI tests
-      - name: Check out repository code
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      # Performs a clean installation of all dependencies in the `package.json` file
-      # For more information, see https://docs.npmjs.com/cli/ci.html
+      # Add steps for code linting, formatting, or any other validations
       - name: Install dependencies
-        run: npm ci
+        run: npm install
+      - name: Code linting
+        run: npm run lint  # Example command for linting
 
-      - name: Run unit tests
-        run: npm test
-      - name: Run the app
-        id: run-app
-        run: |
-          npm install
-          npx sequelize-cli db:drop
-          npx sequelize-cli db:create
-          npx sequelize-cli db:migrate
-          PORT=3000 npm start &
-          sleep 5
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: validate_code
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      # - name: Run integration tests
-      #   run: |
-      #     cd l10
-      #     npm install cypress cypress-json-results
-      #     npx cypress run --env STUDENT_SUBMISSION_URL="http://localhost:3000/"
+      # Add steps for building your web application
+      - name: Build app
+        run: npm run build  # Example command for building
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Add steps for testing your web application
+      - name: Install dependencies
+        run: npm install
+      - name: Run tests
+        run: npm test  # Example command for running tests
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Add steps to deploy your web application
+      # Example deployment using SCP (replace with your deployment method)
+      - name: Deploy to production
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.PRODUCTION_USERNAME }}
+          password: ${{ secrets.PRODUCTION_PASSWORD }}
+          source: "path/to/local/build"
+          target: "path/to/remote/directory"
