@@ -3,10 +3,10 @@ name: Web App CI/CD
 on:
   push:
     branches:
-      - main  # Change this to your main branch name
+      - main
   pull_request:
     branches:
-      - main  # Change this to your main branch name
+      - main
 
 jobs:
   validate_code:
@@ -16,16 +16,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Add steps for TypeScript type checking
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '14'
-
+      # Stage Purpose: Validate code quality through linting and formatting checks
+      # Execution: Install dependencies and run linting and formatting checks
       - name: Install dependencies
         run: npm install
-
-      
+      - name: Code linting
+        run: npm run lint
 
   build:
     name: Build
@@ -35,9 +31,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Add steps for building your web application
+      # Stage Purpose: Build the web application
+      # Execution: Install dependencies and run the build script
+      - name: Install dependencies
+        run: npm install
       - name: Build app
-        run: npm start
+        run: npm run build
 
   test:
     name: Test
@@ -47,11 +46,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Add steps for testing your web application
+      # Stage Purpose: Execute automated tests to validate application functionality
+      # Execution: Install dependencies and run unit tests
       - name: Install dependencies
         run: npm install
-      - name: Run tests
-        run: npm test  # Example command for running tests
+      - name: Run unit tests
+        run: npm test
 
   deploy:
     name: Deploy
@@ -61,8 +61,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Add steps to deploy your web application
-      # Example deployment using SCP (replace with your deployment method)
+      # Stage Purpose: Deploy the web application
+      # Execution: Add deployment steps for the specific deployment method
       - name: Deploy to production
         uses: appleboy/scp-action@master
         with:
@@ -71,3 +71,27 @@ jobs:
           password: ${{ secrets.PRODUCTION_PASSWORD }}
           source: "path/to/local/build"
           target: "path/to/remote/directory"
+
+  error_reporting:
+    name: Error Reporting
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Stage Purpose: Notify the development team of pipeline failures
+      # Execution: Send error notifications to designated Slack channel
+      - name: Notify on Slack in case of failure
+        if: ${{ failure() }}
+        uses: rtCamp/action-slack-notify@v2.0.0
+        with:
+          status: failure
+          message: "Pipeline failed: ${{ github.workflow }}"
+          env: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+# Environment Variables:
+# - PRODUCTION_HOST: Hostname or IP address of the production server for deployment
+# - PRODUCTION_USERNAME: Username for authentication to the production server
+# - PRODUCTION_PASSWORD: Password for authentication to the production server
+# - SLACK_WEBHOOK_URL: Webhook URL for sending error notifications to Slack channel
