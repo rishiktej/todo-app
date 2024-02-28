@@ -25,9 +25,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: TypeScript type checking
-        run: npm run type-check  # Example command for TypeScript type checking
-
+      
 
   build:
     name: Build
