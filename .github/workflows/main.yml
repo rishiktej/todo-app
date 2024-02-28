@@ -80,8 +80,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Stage Purpose: Notify the development team of pipeline failures
-      # Execution: Send error notifications to designated Slack channel
       - name: Notify on Slack in case of failure
         if: ${{ failure() }}
         uses: rtCamp/action-slack-notify@v2.0.0
