@@ -13,7 +13,6 @@ function extractCsrfToken(res) {
 const login = async (agent, username, password) => {
   let res = await agent.get("/login");
   let csrfToken = extractCsrfToken(res);
-  console.log("...c", csrfToken);
   res = await agent.post("/session").send({
     email: username,
     password: password,
@@ -38,7 +37,6 @@ describe("Todo Application", function () {
   test("Sign up", async () => {
     let res = await agent.get("/signup");
     const csrfToken = extractCsrfToken(res);
-    console.log("..ss", csrfToken);
     res = await agent.post("/users").send({
       firstName: "Test",
       lastName: "user A",

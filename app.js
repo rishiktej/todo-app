@@ -92,13 +92,6 @@ app.get("/", async (request, response) => {
 /*app.get("/", function (request, response) {
     console.log("Todo list ",request.body);
   });*/
-
-app.get("/login", (request, response) => {
-  response.render("login.ejs", {
-    title: "Signin",
-    csrfToken: request.csrfToken(),
-  });
-});
 app.get("/signup", (request, response) => {
   if (request.user) {
     return response.redirect("/todos");
@@ -148,8 +141,8 @@ app.post("/users", async (request, response) => {
   }
 });
 
-app.get("/", (request, response) => {
-  response.render("index.ejs", {
+app.get("/login", (request, response) => {
+  response.render("login.ejs", {
     title: "Login",
     csrfToken: request.csrfToken(),
   });
@@ -158,7 +151,7 @@ app.get("/", (request, response) => {
 app.post(
   "/session",
   passport.authenticate("local", {
-    failureRedirect: "/",
+    failureRedirect: "/login",
     failureFlash: true,
   }),
   function (request, response) {
