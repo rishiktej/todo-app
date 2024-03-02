@@ -58,32 +58,21 @@ jobs:
           service-id: "${{ secrets.MY_RENDER_SERVICE_ID }}"
           api-key: "${{ secrets.MY_RENDER_API_KEY }}"
 
-  notify:
-    needs: [run-tests]
-    runs-on: ubuntu-latest
-
-    if: ${{ always() }}
-    steps:
-      - name: Send Slack notification on success
-
-        if: ${{ needs.run-tests.result == 'success' && needs.deploy.result == 'success' }}
-        uses: slackapi/slack-github-action@v1.25.0
+  name: Slack Notify
+        uses: act10ns/slack@v1
         with:
-          payload: |
-            {
-              "text": "CI/CD process succeeded!" 
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          status: ${{ job.status}}
+          channel: "#web-development"
+        if: always()
 
-      - name: Send Slack notification on failure
-        if: ${{ needs.run-tests.result != 'success' || needs.deploy.result != 'success' }}
-        uses: slackapi/slack-github-action@v1.25.0
-        with:
-          payload: |
-            {
-              "text": "*${{ github.workflow }}* failed. Access the details https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}."
-               
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      # Notify on Slack for success
+      - name: Success Notify
+        if: success()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"Commit has been successful✅"}' ${{secrets.SLACK_WEBHOOK_URL}}
+
+      # Notify on Slack for failure
+      - name: Failure Notify
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"⚠️Error: The pipeline has failed❗"}' ${{secrets.SLACK_WEBHOOK_URL}}
