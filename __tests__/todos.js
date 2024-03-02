@@ -151,7 +151,7 @@ describe("Todo Application", function () {
       .set("Accept", "application/json");
     const parsedGroupedResponse = JSON.parse(groupedTodosResponse.text);
     expect(parsedGroupedResponse.dueToday).toBeDefined();
-    const dueTodayCount = parsedGroupedResponse.dueToday.length - 1;
+    const dueTodayCount = parsedGroupedResponse.dueToday.length;
     const latestTodo = parsedGroupedResponse.dueToday[dueTodayCount - 1];
 
     res = await agent.get("/todos");
