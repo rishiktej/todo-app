@@ -20,7 +20,7 @@ jobs:
         image: postgres:11.7
         env:
           POSTGRES_USER: "postgres"
-          POSTGRES_PASSWORD: "admin"
+          POSTGRES_PASSWORD: "rishidb"
           POSTGRES_DB: "wd-todo-test"
         options: >-
           --health-cmd pg_isready
