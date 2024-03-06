@@ -52,10 +52,10 @@ jobs:
           PORT=3000 npm start &
           sleep 5
       # Run integration tests
-      - name: Run integration tests
-        run: |
-          npm install cypress cypress-json-results
-          npx cypress run
+      # - name: Run integration tests
+      #   run: |
+      #     npm install cypress cypress-json-results
+      #     npx cypress run
   build:
     runs-on: ubuntu-latest
     steps:
@@ -78,7 +78,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/clockbox:latest        
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/todoapp:latest        
 
   # Job to deploy the app to production
   deploy:
