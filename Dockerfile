@@ -1,16 +1,43 @@
+# Use multi-stage build to separate development and production environments
 FROM --platform=$BUILDPLATFORM node:lts-alpine as base
+
+# Set working directory
 WORKDIR /app
+
+# Copy package.json to the working directory
 COPY package.json /
+
+# Expose port 3000
 EXPOSE 3000
 
+# Production stage
 FROM base as production
 ENV NODE_ENV=production
-RUN npm install
-COPY . /app
-CMD node index.js
 
+# Install husky globally
+RUN npm install -g husky
+
+# Install pm2 globally
+RUN npm install -g pm2
+
+# Copy application files
+COPY . /app
+
+# Command to start the application using pm2
+CMD pm2 start index.js -i max --log ./logs/app.log
+
+# Development stage
 FROM base as dev
 ENV NODE_ENV=development
-RUN npm install -g nodemon && npm install
+
+# Install nodemon for development
+RUN npm install -g nodemon
+
+# Install dependencies
+RUN npm install
+
+# Copy application files
 COPY . /app
+
+# Command to start the application in development mode using nodemon
 CMD npm run start
