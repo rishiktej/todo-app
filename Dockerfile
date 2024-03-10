@@ -20,7 +20,6 @@ RUN npm install -g husky
 # Install pm2 globally
 RUN npm install -g pm2
 
-# Copy application files
 COPY . /app
 
 # Command to start the application using pm2
